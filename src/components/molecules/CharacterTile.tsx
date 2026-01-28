@@ -8,25 +8,39 @@ interface CharacterTileProps {
   isSolved: boolean;
   imageUrl?: string;
   solvedByTeams?: { teamId: string; color: string }[];
+  displayMode: 'home' | 'team';
+  totalTeams?: number;
 }
 
 const CharacterTile: React.FC<CharacterTileProps> = ({
   isSolved,
   imageUrl,
-  solvedByTeams,
+  solvedByTeams = [],
+  displayMode,
+  totalTeams,
 }) => {
+  const isFullySolved =
+    displayMode === 'home' && totalTeams
+      ? solvedByTeams.length === totalTeams
+      : false;
+
+  const showImage =
+    (displayMode === 'team' && isSolved) || (displayMode === 'home' && isFullySolved);
+
   return (
     <div className="relative aspect-square w-full">
-      {isSolved && imageUrl ? (
+      {showImage && imageUrl ? (
         <CharacterImage imageUrl={imageUrl} altText="Solved Character" />
       ) : (
         <Silhouette />
       )}
-      <div className="absolute bottom-1 right-1 flex space-x-1">
-        {solvedByTeams?.map((team) => (
-          <TeamColorDot key={team.teamId} color={team.color} />
-        ))}
-      </div>
+      {displayMode === 'home' && !isFullySolved && (
+        <div className="absolute inset-x-1 top-1 flex flex-wrap justify-end gap-1">
+          {[...solvedByTeams].reverse().map((team) => (
+            <TeamColorDot key={team.teamId} color={team.color} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

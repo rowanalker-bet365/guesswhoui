@@ -38,29 +38,31 @@ Milestones can be awarded automatically from API telemetry (recommended) and/or 
     M1 — First Round Started: create session + download board
     M2 — First Successful Question: ask one trait and display/use answer
     M3 — Elimination Working: reduce candidate set based on answers
-    M4 — Encrypted Answer Handled: decode at least one encrypted answer and apply it
-    M5 — Resilience: continue progress during a failure window (e.g., 5 valid answers during chaos)
-    M6 — First Correct Solve: submit correct guess
+    M4 — First Correct Solve: submit correct guess
+    M5 — Encrypted Answer Handled: decode at least one encrypted answer and apply it
 
 Stretch milestones
 
     S1 — Efficiency: solve with ≤ N questions (e.g., 8–10)
-    S2 — Automation: ≥ 5 consecutive successful solves
-    S3 — Best Reliability: lowest error rate / fastest recovery
+    S2 — Automation: ≥ 5 consecutive successful solves within a X minute period
+    S3 — Resilience: continue progress during a failure window (e.g., 5 valid answers during chaos)
 
 5) Scoring (supports “many solves over the day”)
 
 Example model (tune as desired):
 
-    Correct solve: +1000
-    Time bonus: timeBonus = max(0, 600 - t)
+    Milestone: +1000
+    Stretch Milestone: +2000
+    Correct solve: +500
+    Time bonus: timeBonus(t is elapsedSeconds) = max(0, 120 - t)
     Question efficiency: qBonus = max(0, 300 - 20*questionsAsked)
-    Reliability penalty: reliabilityPenalty = 5*failedRequests + 2*timeouts + 10*unhandled5xx
-    Wrong guess (if allowed): −500 and session ends
+    Reliability penalty: reliabilityPenalty(400 api returns): -50
+    Automation penalty: 10xfailed sessions = -100
+    Wrong guess (if allowed): −200 (session ends after 3rd incorrect guess)
 
 Leaderboard fields (recommended)
 
-    totalScore, solves, avgSolveTime, avgQuestions, successRate, bestStreak
+    totalScore, solves, bestSolveTime, avgQuestions, successRate, bestStreak
 
 6) Session Randomization (repeatable + fair)
 

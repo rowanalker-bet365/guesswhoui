@@ -16,7 +16,7 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
     try {
-      const { token, team } = await api.login(teamName, password);
+      const { token, team } = await api.login({ teamName, password });
       login(team, token);
       router.push('/team');
     } catch (e: any) {
@@ -28,7 +28,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+      <div className="w-full max-w-md rounded-lg bg-white p-8 text-black shadow-md">
         <h1 className="mb-6 text-center text-3xl font-bold">Team Login</h1>
         <LoginForm onLogin={handleLogin} error={error} disabled={isLoading} />
       </div>

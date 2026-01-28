@@ -5,11 +5,11 @@ const SkeletonItem = ({ className }: { className?: string }) => (
   <div className={cn('h-4 bg-gray-200 rounded animate-pulse', className)} />
 );
 
-const StageTrackerSkeleton = () => {
+const MilestoneTrackerSkeleton = () => {
   return (
     <div className="p-4 bg-white rounded-lg shadow">
       <h3 className="mb-4 text-lg font-semibold text-gray-700">
-        Stage Progress
+        Milestone Progress
       </h3>
       <div className="space-y-4">
         {[...Array(5)].map((_, i) => (
@@ -26,4 +26,4 @@ const StageTrackerSkeleton = () => {
   );
 };
 
-export { StageTrackerSkeleton };
+export { MilestoneTrackerSkeleton };

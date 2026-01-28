@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { GameBoard } from '@/components/organisms/GameBoard';
 import { GameBoardSkeleton } from '@/components/organisms/GameBoardSkeleton';
 import { Leaderboard } from '@/components/organisms/Leaderboard';
@@ -9,7 +10,7 @@ import { Header } from '@/components/organisms/Header';
 import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { Character, LeaderboardEntry } from '@/store/game-store';
 import useSWR from 'swr';
-import { api } from '@/lib/api';
+import { fetcher } from '@/lib/api';
 
 export default function HomePage() {
   const isLoggedIn = useGameStore((s) => s.isLoggedIn);
@@ -19,7 +20,21 @@ export default function HomePage() {
     logout();
   };
 
-  const { data, isLoading } = useSWR('/api/game/state', api.getGameState);
+  const {
+    data,
+    isLoading,
+    error,
+  } = useSWR<{ characters: Character[]; leaderboard: LeaderboardEntry[] }>(
+    '/game/state',
+    fetcher,
+    { refreshInterval: 2000 }
+  );
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Failed to load game state.');
+    }
+  }, [error]);
 
   const characters: Character[] = data?.characters || [];
   const leaderboard: LeaderboardEntry[] = data?.leaderboard || [];
@@ -27,13 +42,25 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header isLoggedIn={isLoggedIn} onSignOut={handleSignOut} />
-      <main className="container mx-auto p-4">
+      <main className="mx-auto max-w-screen-2xl p-4">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            {isLoading ? <GameBoardSkeleton /> : <GameBoard characters={characters} />}
+            {isLoading ? (
+              <GameBoardSkeleton />
+            ) : (
+              <GameBoard
+                characters={characters}
+                displayMode="home"
+                totalTeams={leaderboard.length}
+              />
+            )}
           </div>
           <div>
-            {isLoading ? <LeaderboardSkeleton /> : <Leaderboard entries={leaderboard} />}
+            {isLoading ? (
+              <LeaderboardSkeleton />
+            ) : (
+              <Leaderboard entries={leaderboard} />
+            )}
           </div>
         </div>
       </main>

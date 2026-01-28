@@ -1,27 +1,42 @@
 import React from 'react';
 import { Icon } from '../atoms/Icon';
+import { TeamColorDot } from '../atoms/TeamColorDot';
 
 interface LeaderboardRowProps {
   rank: number;
   teamName: string;
   score: number;
+  solves: number;
+  quickestSolve: string;
+  teamColor: string;
 }
 
-const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ rank, teamName, score }) => {
+const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
+  rank,
+  teamName,
+  score,
+  solves,
+  quickestSolve,
+  teamColor,
+}) => {
   const getRankIcon = () => {
-    if (rank === 1) return <Icon name="Trophy" className="text-yellow-500" />;
-    if (rank === 2) return <Icon name="Medal" className="text-gray-400" />;
-    if (rank === 3) return <Icon name="Award" className="text-orange-400" />;
-    return <span className="text-sm text-gray-500">{rank}</span>;
+    const commonClassName = "h-6 w-6 flex-shrink-0";
+    if (rank === 1) return <Icon name="Trophy" className={`text-yellow-500 ${commonClassName}`} />;
+    if (rank === 2) return <Icon name="Medal" className={`text-gray-400 ${commonClassName}`} />;
+    if (rank === 3) return <Icon name="Award" className={`text-orange-400 ${commonClassName}`} />;
+    return <span className={`flex items-center justify-center text-sm text-gray-200 ${commonClassName}`}>{rank}</span>;
   };
 
   return (
-    <div className="flex items-center justify-between rounded-lg bg-gray-100 p-2">
-      <div className="flex items-center space-x-2">
+    <div className="grid grid-cols-5 items-center gap-2 rounded-lg bg-brand-hover p-2 text-center text-white">
+      <div className="col-span-2 flex items-center space-x-2">
         {getRankIcon()}
-        <span className="font-semibold">{teamName}</span>
+        <TeamColorDot color={teamColor} />
+        <span className="truncate font-semibold">{teamName}</span>
       </div>
-      <span className="font-bold text-primary">{score.toLocaleString()}</span>
+      <span className="col-span-1 font-semibold">{solves}</span>
+      <span className="col-span-1 font-semibold">{quickestSolve}</span>
+      <span className="col-span-1 font-bold text-white">{score.toLocaleString()}</span>
     </div>
   );
 };

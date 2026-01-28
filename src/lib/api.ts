@@ -1,29 +1,58 @@
-import { Character, GameState, LeaderboardEntry, Team } from '@/store/game-store';
+import {
+  GetGameStateResponse,
+  GetTeamProgressResponse,
+  LoginRequest,
+  LoginResponse,
+  ResetResponse,
+  SignupRequest,
+  SignupResponse,
+} from '@/types';
+import Cookies from 'js-cookie';
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = '/api';
+
+export class ApiError extends Error {
+  info: any;
+  status: number;
+
+  constructor(message: string, status: number, info: any) {
+    super(message);
+    this.status = status;
+    this.info = info;
+  }
+}
 
 // --- Generic Fetcher ---
 
-async function fetcher<T>(
+export async function fetcher<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
+  const authToken = Cookies.get('guesswho_authtoken');
+  const headers = new Headers(options.headers);
+  headers.set('Content-Type', 'application/json');
+
+  if (authToken) {
+    headers.set('Authorization', `Bearer ${authToken}`);
+  }
+
   const res = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
 
   if (!res.ok) {
-    const error = new Error('An error occurred while fetching the data.');
-    // Attach extra info to the error object.
-    // @ts-ignore
-    error.info = await res.json();
-    // @ts-ignore
-    error.status = res.status;
-    throw error;
+    let errorInfo;
+    try {
+      errorInfo = await res.json();
+    } catch (e) {
+      errorInfo = { message: res.statusText };
+    }
+    throw new ApiError(
+      'An error occurred while fetching the data.',
+      res.status,
+      errorInfo
+    );
   }
 
   return res.json();
@@ -41,35 +70,35 @@ class ApiClient {
     return newController.signal;
   }
 
-  async signup(teamName: string, password: string): Promise<{ message: string }> {
+  async signup(data: SignupRequest): Promise<SignupResponse> {
     return fetcher('/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ teamName, password }),
+      body: JSON.stringify(data),
       signal: this.getAbortSignal('signup'),
     });
   }
 
-  async login(teamName: string, password: string): Promise<{ token: string; team: Team }> {
+  async login(data: LoginRequest): Promise<LoginResponse> {
     return fetcher('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ teamName, password }),
+      body: JSON.stringify(data),
       signal: this.getAbortSignal('login'),
     });
   }
 
-  async getGameState(): Promise<{ characters: Character[]; leaderboard: LeaderboardEntry[] }> {
+  async getGameState(): Promise<GetGameStateResponse> {
     return fetcher('/game/state', {
       signal: this.getAbortSignal('getGameState'),
     });
   }
 
-  async getTeamProgress(): Promise<GameState['teamProgress']> {
+  async getTeamProgress(): Promise<GetTeamProgressResponse> {
     return fetcher('/team/progress', {
       signal: this.getAbortSignal('getTeamProgress'),
     });
   }
 
-  async resetBoard(): Promise<{ message: string }> {
+  async resetBoard(): Promise<ResetResponse> {
     return fetcher('/team/reset', {
       method: 'POST',
       signal: this.getAbortSignal('resetBoard'),
