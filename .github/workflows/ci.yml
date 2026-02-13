@@ -10,7 +10,7 @@ permissions:
   id-token: 'write'
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: self-hosted
 
     steps:
@@ -19,5 +19,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-    - run: npm install
-    - run: npm run build
+    - name: Install Dependencies
+      run: npm install
+    - name: Run npm run build
+      run: npm run build
