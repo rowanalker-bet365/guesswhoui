@@ -19,8 +19,10 @@ jobs:
       with:
         node-version: 18
     - name: Install Dependencies
-      run: npm install
-      working-directory: ./guesswhoui
+      run: |
+        cd guesswhoui
+        npm install
     - name: Run npm run build
-      run: npm run build
-      working-directory: ./guesswhoui
+      run: |
+        cd guesswhoui
+        npm run build
