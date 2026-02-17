@@ -9,7 +9,7 @@ import {
 } from '@/types';
 import Cookies from 'js-cookie';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export class ApiError extends Error {
   info: any;
