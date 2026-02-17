@@ -3,8 +3,6 @@ name: Deploy GuessWhoUI to GCS
 on:
   pull_request:
     types: [closed]
-    paths:
-      - 'guesswhoui/**'
 
 permissions:
   contents: 'read'
