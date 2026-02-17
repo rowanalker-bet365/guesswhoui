@@ -32,11 +32,11 @@ jobs:
           node-version: 20.x
 
       - name: Build Next.js Application
-        working-directory: ./guesswhoui
         run: |
+          cd guesswhoui
           npm install
           NEXT_PUBLIC_API_URL=${{ secrets.GUESSWHOCLIENT_API_URL }} npm run build
 
       - name: Deploy to Google Cloud Storage
         run: |
-          gcloud storage rsync ./out gs://${{ secrets.GCP_PROJECT_ID }}-guesswhoui --recursive --delete-unmatched-destination-objects
+          gcloud storage rsync ./guesswhoui/out gs://${{ secrets.GCP_PROJECT_ID }}-guesswhoui --recursive --delete-unmatched-destination-objects
