@@ -33,7 +33,6 @@ jobs:
 
       - name: Build Next.js Application
         run: |
-          cd guesswhoui
           npm install
           NEXT_PUBLIC_API_URL=${{ secrets.GUESSWHOCLIENT_API_URL }} npm run build
 
