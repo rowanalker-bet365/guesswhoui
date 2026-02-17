@@ -1,24 +1,39 @@
-name: CI
+name: Deploy GuessWhoUI to GCS
 
 on:
   pull_request:
     types: [closed]
+    paths:
+      - 'guesswhoui/**'
+
 permissions:
   contents: 'read'
   id-token: 'write'
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: self-hosted
     if: github.event.pull_request.merged == true
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js 18
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - name: Install Dependencies
-      run: npm install --prefix guesswhoui
-    - name: Run npm run build
-      run: npm run build --prefix guesswhoui
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Build Next.js Application
+        working-directory: ./guesswhoui
+        run: |
+          npm install
+          NEXT_PUBLIC_API_URL=${{ secrets.GUESSWHOCLIENT_API_URL }} npm run build
+
+      - name: Deploy to Google Cloud Storage
+        working-directory: ./guesswhoui
+        run: |
+          gcloud storage rsync ./out gs://${{ secrets.GCP_PROJECT_ID }}-guesswhoui --recursive --delete-unmatched-destination-objects
