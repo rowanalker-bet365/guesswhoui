@@ -32,7 +32,7 @@ jobs:
           node-version: 20.x
 
       - name: Install dependencies
-        run: echo "registry=https://registry.npmjs.org/" > ./.npmrc && npm install --verbose
+        run: npm install --prefix guesswhoui --registry=https://registry.npmjs.org/ --verbose
 
       - name: Build Next.js Application
         run: NEXT_PUBLIC_API_URL=${{ secrets.GUESSWHOCLIENT_API_URL }} npm run build
