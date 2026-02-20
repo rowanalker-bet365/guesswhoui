@@ -1,7 +1,7 @@
-name: Deploy GuessWhoUI to GCS
+name: Build and Deploy GuessWhoUI
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
@@ -10,33 +10,56 @@ permissions:
   id-token: 'write'
 
 jobs:
-  deploy:
-    environment: production
-    runs-on: self-hosted
+  build-guesswhoui:
+    name: Build GuessWhoUI Container
+    runs-on: ubuntu-latest
+    outputs:
+      image_url: ${{ steps.push_image.outputs.image_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
 
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
 
-      - name: Install dependencies
-        run: npm install --registry=https://registry.npmjs.org/
-
-      - name: Build Next.js Application
-        run: NEXT_PUBLIC_API_URL=${{ secrets.GUESSWHOCLIENT_API_URL }} npm run build
-
-      - name: Deploy to Google Cloud Storage
+      - name: Build and Push Docker Image
+        id: push_image
         run: |
-          gcloud storage rsync ./out gs://${{ secrets.GCP_PROJECT_ID }}-guesswhoui --recursive --delete-unmatched-destination-objects
+          IMAGE_URL="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/guesswhoui/guesswhoui:${{ github.sha }}"
+          docker build -t $IMAGE_URL -f guesswhoui/Dockerfile .
+          docker push $IMAGE_URL
+          echo "image_url=$IMAGE_URL" >> $GITHUB_OUTPUT
+
+  deploy:
+    name: Deploy to Cloud Run
+    needs: build-guesswhoui
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform/environments/dev init
+
+      - name: Terraform Apply
+        run: |
+          terraform -chdir=terraform/environments/dev apply -auto-approve -var="image_url=${{ needs.build-guesswhoui.outputs.image_url }}"

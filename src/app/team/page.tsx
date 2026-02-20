@@ -21,18 +21,20 @@ const TeamDashboard = () => {
   const { mutate } = useSWRConfig();
   const [isResetting, setIsResetting] = useState(false);
 
-  const { data: gameState, isLoading: isGameLoading } = useSWR<GameState>(
-    '/game/state',
-    fetcher
-  );
-
   const {
     data: teamProgress,
     isLoading: isTeamProgressLoading,
     error,
-  } = useSWR<GameState['teamProgress']>(
-    team ? `/team/progress?teamName=${encodeURIComponent(team.name)}` : null,
-    fetcher
+  } = useSWR(
+    team ? ['team-progress', team.name] : null,
+    () => api.getTeamProgress(),
+  );
+
+  const sessionId = useGameStore((s) => s.sessionId);
+
+  const { data: boardData, isLoading: isGameLoading } = useSWR(
+    sessionId ? ['board', sessionId] : null,
+    () => api.getBoard(sessionId!),
   );
 
   useEffect(() => {
@@ -60,12 +62,12 @@ const TeamDashboard = () => {
   }, [teamProgress]);
 
   const characters = useMemo(() => {
-    if (!gameState || !teamProgress) return [];
-    return gameState.characters.map((char) => ({
+    if (!boardData || !teamProgress) return [];
+    return boardData.candidates.map((char: Character) => ({
       ...char,
       isSolved: teamProgress.solvedCharacters.includes(char.id),
     }));
-  }, [gameState, teamProgress]);
+  }, [boardData, teamProgress]);
 
   const runningTime = useTimer(challengeStartTime);
   const isLoading = isGameLoading || isTeamProgressLoading;

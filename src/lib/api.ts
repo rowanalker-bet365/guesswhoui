@@ -8,11 +8,13 @@ import {
   SignupResponse,
 } from '@/types';
 import Cookies from 'js-cookie';
+import { fetchWithAuth, fetchPublic } from './api-client';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_BASE_URL =
+	process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL || 'http://localhost:8080';
 
 export class ApiError extends Error {
-  info: any;
+	info: any;
   status: number;
 
   constructor(message: string, status: number, info: any) {
@@ -25,23 +27,27 @@ export class ApiError extends Error {
 // --- Generic Fetcher ---
 
 export async function fetcher<T>(
-  url: string,
-  options: RequestInit = {}
+	url: string,
+	options: RequestInit = {},
+	isPublic: boolean = false
 ): Promise<T> {
-  const authToken = Cookies.get('guesswho_authtoken');
-  const headers = new Headers(options.headers);
-  headers.set('Content-Type', 'application/json');
+	const teamId = Cookies.get('teamId');
+	const headers = new Headers(options.headers);
+	headers.set('Content-Type', 'application/json');
 
-  if (authToken) {
-    headers.set('Authorization', `Bearer ${authToken}`);
-  }
+	// Add teamId to header for authenticated requests
+	if (teamId) {
+		headers.set('X-Team-Id', teamId);
+	}
 
-  const res = await fetch(`${API_BASE_URL}${url}`, {
-    ...options,
-    headers,
-  });
+	const fetchFn = isPublic ? fetchPublic : fetchWithAuth;
 
-  if (!res.ok) {
+	const res = await fetchFn(`${API_BASE_URL}/v1${url}`, {
+		...options,
+		headers,
+	});
+
+	if (!res.ok) {
     let errorInfo;
     try {
       errorInfo = await res.json();
@@ -71,39 +77,61 @@ class ApiClient {
   }
 
   async signup(data: SignupRequest): Promise<SignupResponse> {
-    return fetcher('/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      signal: this.getAbortSignal('signup'),
-    });
+  return fetcher('/auth/signup', {
+   method: 'POST',
+   body: JSON.stringify(data),
+   signal: this.getAbortSignal('signup'),
+  }, true);
+ }
+
+ async login(data: LoginRequest): Promise<LoginResponse> {
+  return fetcher('/auth/login', {
+   method: 'POST',
+   body: JSON.stringify(data),
+   signal: this.getAbortSignal('login'),
+  }, true);
+ }
+
+ async getLeaderboard(): Promise<any> {
+   return fetcher(
+     '/client/leaderboard',
+     {
+       signal: this.getAbortSignal('getLeaderboard'),
+     },
+     false, // Authenticated
+   );
   }
 
-  async login(data: LoginRequest): Promise<LoginResponse> {
-    return fetcher('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      signal: this.getAbortSignal('login'),
-    });
+  async getBoard(sessionId: string): Promise<any> {
+   return fetcher(
+     `/client/sessions/${sessionId}/board`,
+     {
+       signal: this.getAbortSignal('getBoard'),
+     },
+     false, // Authenticated
+   );
   }
 
-  async getGameState(): Promise<GetGameStateResponse> {
-    return fetcher('/game/state', {
-      signal: this.getAbortSignal('getGameState'),
-    });
-  }
+ async getTeamProgress(): Promise<GetTeamProgressResponse> {
+  return fetcher(
+   '/client/team/progress',
+   {
+    signal: this.getAbortSignal('getTeamProgress'),
+   },
+   false // This is an authenticated endpoint
+  );
+ }
 
-  async getTeamProgress(): Promise<GetTeamProgressResponse> {
-    return fetcher('/team/progress', {
-      signal: this.getAbortSignal('getTeamProgress'),
-    });
-  }
-
-  async resetBoard(): Promise<ResetResponse> {
-    return fetcher('/team/reset', {
-      method: 'POST',
-      signal: this.getAbortSignal('resetBoard'),
-    });
-  }
+ async resetBoard(): Promise<ResetResponse> {
+  return fetcher(
+   '/team/reset',
+   {
+    method: 'POST',
+    signal: this.getAbortSignal('resetBoard'),
+   },
+   false // This is an authenticated endpoint
+  );
+ }
 }
 
 export const api = new ApiClient();

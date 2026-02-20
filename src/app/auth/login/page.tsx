@@ -16,8 +16,8 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
     try {
-      const { token, team } = await api.login({ teamName, password });
-      login(team, token);
+      const { token, team, sessionId } = await api.login({ teamName, password });
+      login(team, token, sessionId);
       router.push('/team');
     } catch (e: any) {
       setError(e.info?.message || 'An unknown error occurred.');
