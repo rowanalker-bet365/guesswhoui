@@ -3,7 +3,6 @@
 import React from 'react';
 import { SignupForm } from '@/components/organisms/SignupForm';
 import { useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -14,10 +13,22 @@ export default function SignupPage() {
     setIsLoading(true);
     setError('');
     try {
-      await api.signup({ teamName, password });
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ teamName, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Signup failed');
+      }
+
       router.push('/auth/login?status=signup_success');
     } catch (e: any) {
-      setError(e.info?.message || 'An unknown error occurred.');
+      setError(e.message || 'An unknown error occurred.');
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -8,6 +8,21 @@ const nextConfig = {
         hostname: 'picsum.photos',
       },
     ],
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        child_process: false,
+        tls: false,
+        events: false,
+        process: false,
+        util: false,
+      };
+    }
+    return config;
   },
 };
 

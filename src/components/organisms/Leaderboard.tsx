@@ -10,22 +10,23 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
   return (
     <div className="w-full max-w-md rounded-lg bg-brand p-4 text-white shadow">
       <h2 className="mb-4 text-center text-xl font-bold">Leaderboard</h2>
-      <div className="grid grid-cols-5 items-center gap-2 text-center font-bold">
-        <div className="col-span-2">Team</div>
-        <div className="col-span-1">Solves</div>
-        <div className="col-span-1">Fastest</div>
-        <div className="col-span-1">Score</div>
+      <div className="grid grid-cols-12 items-center gap-2 px-2 text-center text-sm font-bold">
+        <div className="col-span-1" /> {/* Rank - no header */}
+        <div className="col-span-5 text-left">Team</div>
+        <div className="col-span-3">Solves</div>
+        <div className="col-span-3">Quickest Solve</div>
+        <div className="col-span-3 font-semibold">Score</div>
       </div>
       <div className="mt-2 space-y-2">
         {entries.map((entry) => (
           <LeaderboardRow
-            key={entry.rank}
+            key={entry.teamName}
             rank={entry.rank}
             teamName={entry.teamName}
-            score={entry.score}
             solves={entry.solves}
-            quickestSolve={entry.quickestSolve}
+            quickestSolve={String(entry.quickestSolve)}
             teamColor={entry.teamColor}
+            score={entry.score}
           />
         ))}
       </div>
