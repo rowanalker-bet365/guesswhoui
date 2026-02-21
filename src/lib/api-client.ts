@@ -1,3 +1,4 @@
+import 'server-only';
 import { GoogleAuth } from 'google-auth-library';
 
 const GUESSWHOSERVICE_URL = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL;
