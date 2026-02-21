@@ -10,7 +10,9 @@ import { Header } from '@/components/organisms/Header';
 import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { Character, LeaderboardEntry } from '@/store/game-store';
 import useSWR from 'swr';
-import { api } from '@/lib/api';
+
+// A simple fetcher function for SWR to use
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function HomePage() {
   const isLoggedIn = useGameStore((s) => s.isLoggedIn);
@@ -20,11 +22,12 @@ export default function HomePage() {
     logout();
   };
 
+  // MODIFIED: The SWR key is now the API route
   const {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
     error: leaderboardError,
-  } = useSWR('leaderboard', () => api.getLeaderboard(), {
+  } = useSWR('/api/leaderboard', fetcher, { // <-- CHANGE HERE
     refreshInterval: 2000,
   });
 

@@ -10,7 +10,7 @@ import { Button } from '@/components/atoms/Button';
 import { GameBoardSkeleton } from '@/components/organisms/GameBoardSkeleton';
 import { Character, GameState } from '@/store/game-store';
 import useSWR, { useSWRConfig } from 'swr';
-import { api, fetcher } from '@/lib/api';
+import Cookies from 'js-cookie';
 import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { useRouter } from 'next/navigation';
 import useTimer from '@/hooks/useTimer';
@@ -21,20 +21,26 @@ const TeamDashboard = () => {
   const { mutate } = useSWRConfig();
   const [isResetting, setIsResetting] = useState(false);
 
+  const fetcher = (url: string) => {
+    const teamId = Cookies.get('teamId');
+    return fetch(url, {
+      headers: {
+        'X-Team-Id': teamId || '',
+      },
+    }).then((res) => res.json());
+  };
+
   const {
     data: teamProgress,
     isLoading: isTeamProgressLoading,
     error,
-  } = useSWR(
-    team ? ['team-progress', team.name] : null,
-    () => api.getTeamProgress(),
-  );
+  } = useSWR(team ? '/api/team/progress' : null, fetcher);
 
   const sessionId = useGameStore((s) => s.sessionId);
 
   const { data: boardData, isLoading: isGameLoading } = useSWR(
-    sessionId ? ['board', sessionId] : null,
-    () => api.getBoard(sessionId!),
+    sessionId ? `/api/board/${sessionId}` : null,
+    fetcher
   );
 
   useEffect(() => {
@@ -76,8 +82,13 @@ const TeamDashboard = () => {
     const toastId = toast.loading('Resetting board...');
     setIsResetting(true);
     try {
-      await api.resetBoard();
-      await mutate('/team/progress');
+      await fetch('/api/team/reset', {
+        method: 'POST',
+        headers: {
+          'X-Team-Id': Cookies.get('teamId') || '',
+        },
+      });
+      await mutate('/api/team/progress');
       toast.success('Board reset successfully!', { id: toastId });
     } catch (error) {
       console.error('Failed to reset board:', error);

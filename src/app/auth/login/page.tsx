@@ -4,7 +4,6 @@ import React from 'react';
 import { LoginForm } from '@/components/organisms/LoginForm';
 import { useRouter } from 'next/navigation';
 import { useGameStoreApi } from '@/contexts/GameContext';
-import { api } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,11 +15,24 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
     try {
-      const { token, team, sessionId } = await api.login({ teamName, password });
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ teamName, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
+      }
+
+      const { token, team, sessionId } = await response.json();
       login(team, token, sessionId);
       router.push('/team');
     } catch (e: any) {
-      setError(e.info?.message || 'An unknown error occurred.');
+      setError(e.message || 'An unknown error occurred.');
     } finally {
       setIsLoading(false);
     }
