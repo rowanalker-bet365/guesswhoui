@@ -34,11 +34,8 @@ jobs:
 
       - name: Build and Push Docker Image
         id: push_image
-        env:
-          GCP_REGION: ${{ secrets.GCP_REGION }}
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
-          IMAGE_URL="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/guesswho:${{ github.sha }}"
+          IMAGE_URL="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/guesswho:${{ github.sha }}"
           docker build -t $IMAGE_URL -f ./Dockerfile .
           docker push $IMAGE_URL
           echo "image_url=$IMAGE_URL" >> $GITHUB_OUTPUT
