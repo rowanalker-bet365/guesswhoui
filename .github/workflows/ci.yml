@@ -43,4 +43,6 @@ jobs:
           gcloud run deploy guesswhoui \
             --image ${{ steps.push_image.outputs.image_url }} \
             --region ${{ secrets.GCP_REGION }} \
-            --platform managed
+            --platform managed \
+            --service-account ${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
+            --allow-unauthenticated
