@@ -44,5 +44,4 @@ jobs:
             --image ${{ steps.push_image.outputs.image_url }} \
             --region ${{ secrets.GCP_REGION }} \
             --platform managed \
-            --service-account ${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
             --allow-unauthenticated
