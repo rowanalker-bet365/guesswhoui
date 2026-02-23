@@ -1,6 +1,9 @@
 # API Contracts and Data Models
 
-This document defines the data contracts for the application's API and the core data models.
+This document defines the data contracts for the GuessWho application, which uses a two-service architecture:
+
+1.  **`guesswhoclientapi` (Client-Facing API):** Serves read-only game state and handles authentication.
+2.  **`game-api` (Game Logic API):** Processes write operations like submissions.
 
 ## Core Data Models
 
@@ -44,7 +47,9 @@ interface ApiLeaderboardEntry {
 }
 ```
 
-## API Endpoint Contracts
+## `guesswhoclientapi` Endpoints
+
+This service is responsible for authentication, serving read-only game state, and managing team data.
 
 ### Authentication
 
@@ -116,6 +121,29 @@ interface ApiLeaderboardEntry {
 - **Response:** `ResetResponse`
   ```typescript
   interface ResetResponse {
+    message: string;
+  }
+  ```
+
+## `game-api` Endpoints
+
+This service handles core game logic and write operations.
+
+### Game Actions
+
+#### `POST /submit-answer`
+
+- **Description:** Submits a character guess for the authenticated team. This is a write operation that updates the game state.
+- **Request:** `SubmitAnswerRequest`
+  ```typescript
+  interface SubmitAnswerRequest {
+    characterId: string;
+  }
+  ```
+- **Response:** `SubmitAnswerResponse`
+  ```typescript
+  interface SubmitAnswerResponse {
+    success: boolean;
     message: string;
   }
   ```
