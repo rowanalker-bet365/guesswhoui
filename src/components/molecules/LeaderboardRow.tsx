@@ -5,19 +5,19 @@ import { TeamColorDot } from '../atoms/TeamColorDot';
 interface LeaderboardRowProps {
   rank: number;
   teamName: string;
-  score: number;
   solves: number;
   quickestSolve: string;
   teamColor: string;
+  score: number;
 }
 
 const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
   rank,
   teamName,
-  score,
   solves,
   quickestSolve,
   teamColor,
+  score,
 }) => {
   const getRankIcon = () => {
     const commonClassName = "h-6 w-6 flex-shrink-0";
@@ -28,15 +28,15 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-5 items-center gap-2 rounded-lg bg-brand-hover p-2 text-center text-white">
-      <div className="col-span-2 flex items-center space-x-2">
-        {getRankIcon()}
+    <div className="grid grid-cols-12 items-center gap-2 rounded-lg bg-brand-hover p-2 text-center text-sm text-white">
+      <div className="col-span-1 flex items-center justify-center">{getRankIcon()}</div>
+      <div className="col-span-5 flex items-center space-x-2 text-left">
         <TeamColorDot color={teamColor} />
         <span className="truncate font-semibold">{teamName}</span>
       </div>
-      <span className="col-span-1 font-semibold">{solves}</span>
-      <span className="col-span-1 font-semibold">{quickestSolve}</span>
-      <span className="col-span-1 font-bold text-white">{score.toLocaleString()}</span>
+      <span className="col-span-3 font-semibold">{solves}</span>
+      <span className="col-span-3 font-semibold">{quickestSolve}</span>
+      <span className="col-span-3 font-bold">{score}</span>
     </div>
   );
 };

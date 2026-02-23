@@ -58,9 +58,10 @@ export interface LoginResponse {
   token: string;
   team: {
     id: string;
-    name: string;
+    name:string;
     color: string;
   };
+  sessionId: string;
 }
 
 // GET /api/game/state

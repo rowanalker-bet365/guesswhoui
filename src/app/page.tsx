@@ -10,7 +10,9 @@ import { Header } from '@/components/organisms/Header';
 import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { Character, LeaderboardEntry } from '@/store/game-store';
 import useSWR from 'swr';
-import { fetcher } from '@/lib/api';
+
+// A simple fetcher function for SWR to use
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function HomePage() {
   const isLoggedIn = useGameStore((s) => s.isLoggedIn);
@@ -20,24 +22,23 @@ export default function HomePage() {
     logout();
   };
 
+  // MODIFIED: The SWR key is now the API route
   const {
-    data,
-    isLoading,
-    error,
-  } = useSWR<{ characters: Character[]; leaderboard: LeaderboardEntry[] }>(
-    '/game/state',
-    fetcher,
-    { refreshInterval: 2000 }
-  );
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    error: leaderboardError,
+  } = useSWR('/api/leaderboard', fetcher, { // <-- CHANGE HERE
+    refreshInterval: 2000,
+  });
 
   useEffect(() => {
-    if (error) {
-      toast.error('Failed to load game state.');
+    if (leaderboardError) {
+      toast.error('Failed to load leaderboard.');
     }
-  }, [error]);
+  }, [leaderboardError]);
 
-  const characters: Character[] = data?.characters || [];
-  const leaderboard: LeaderboardEntry[] = data?.leaderboard || [];
+  const leaderboard: LeaderboardEntry[] = leaderboardData?.entries || [];
+  const characters: Character[] = []; // Characters are not fetched on the homepage anymore
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,7 +46,7 @@ export default function HomePage() {
       <main className="mx-auto max-w-screen-2xl p-4">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            {isLoading ? (
+            {isLeaderboardLoading ? (
               <GameBoardSkeleton />
             ) : (
               <GameBoard
@@ -56,7 +57,7 @@ export default function HomePage() {
             )}
           </div>
           <div>
-            {isLoading ? (
+            {isLeaderboardLoading ? (
               <LeaderboardSkeleton />
             ) : (
               <Leaderboard entries={leaderboard} />

@@ -27,14 +27,16 @@ export type GameState = {
   authToken?: string;
   team?: Team;
   // Game State
+  sessionId?: string;
   characters: Character[];
   leaderboard: LeaderboardEntry[];
   teamProgress: TeamData;
 };
 
 export type GameActions = {
-  login: (team: Team, token: string) => void;
+  login: (team: Team, token: string, sessionId: string) => void;
   logout: () => void;
+  setSessionId: (sessionId: string) => void;
   setGameState: (characters: Character[], leaderboard: LeaderboardEntry[]) => void;
   setTeamProgress: (progress: GetTeamProgressResponse) => void;
   updateCharacter: (characterUpdate: { characterId: string; teamId: string }) => void;
@@ -48,6 +50,7 @@ export const defaultInitState: GameState = {
   isLoggedIn: false,
   authToken: undefined,
   team: undefined,
+  sessionId: undefined,
   characters: [],
   leaderboard: [],
   teamProgress: {
@@ -66,14 +69,22 @@ export const defaultInitState: GameState = {
 export const createGameStore = (initState: GameState = defaultInitState) => {
   return createStore<GameStore>()((set) => ({
     ...initState,
-    login: (team, token) => {
+    login: (team, token, sessionId) => {
       Cookies.set('guesswho_authtoken', token, { expires: 1 }); // Expires in 1 day
-      set({ isLoggedIn: true, team, authToken: token });
+      Cookies.set('sessionId', sessionId, { expires: 1 });
+      set({ isLoggedIn: true, team, authToken: token, sessionId });
     },
     logout: () => {
       Cookies.remove('guesswho_authtoken');
-      set({ isLoggedIn: false, team: undefined, authToken: undefined });
+      Cookies.remove('sessionId');
+      set({
+        isLoggedIn: false,
+        team: undefined,
+        authToken: undefined,
+        sessionId: undefined,
+      });
     },
+    setSessionId: (sessionId) => set({ sessionId }),
     setGameState: (characters, leaderboard) => set({ characters, leaderboard }),
     setTeamProgress: (teamProgress) => set({ teamProgress }),
     updateCharacter: ({ characterId, teamId }) =>
