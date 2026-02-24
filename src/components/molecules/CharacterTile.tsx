@@ -6,7 +6,7 @@ import { TeamColorDot } from '../atoms/TeamColorDot';
 interface CharacterTileProps {
   characterId: string;
   isSolved: boolean;
-  imageUrl?: string;
+  imagePath?: string;
   solvedByTeams?: { teamId: string; color: string }[];
   displayMode: 'home' | 'team';
   totalTeams?: number;
@@ -14,7 +14,7 @@ interface CharacterTileProps {
 
 const CharacterTile: React.FC<CharacterTileProps> = ({
   isSolved,
-  imageUrl,
+  imagePath,
   solvedByTeams = [],
   displayMode,
   totalTeams,
@@ -24,13 +24,10 @@ const CharacterTile: React.FC<CharacterTileProps> = ({
       ? solvedByTeams.length === totalTeams
       : false;
 
-  const showImage =
-    (displayMode === 'team' && isSolved) || (displayMode === 'home' && isFullySolved);
-
   return (
     <div className="relative aspect-square w-full">
-      {showImage && imageUrl ? (
-        <CharacterImage imageUrl={imageUrl} altText="Solved Character" />
+      {imagePath ? (
+        <CharacterImage imagePath={imagePath} altText="Character" />
       ) : (
         <Silhouette />
       )}

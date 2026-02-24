@@ -6,7 +6,6 @@ import { Header } from '@/components/organisms/Header';
 import { TeamMetricsBanner } from '@/components/organisms/TeamMetricsBanner';
 import { MilestoneTracker } from '@/components/organisms/MilestoneTracker';
 import { GameBoard } from '@/components/organisms/GameBoard';
-import { SolvedCharactersGrid } from '@/components/organisms/SolvedCharactersGrid';
 import { Button } from '@/components/atoms/Button';
 import { GameBoardSkeleton } from '@/components/organisms/GameBoardSkeleton';
 import { Character, GameState } from '@/store/game-store';
@@ -16,6 +15,7 @@ import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { useRouter } from 'next/navigation';
 import useTimer from '@/hooks/useTimer';
 import { MilestoneTrackerSkeleton } from '@/components/organisms/MilestoneTrackerSkeleton';
+import { CHARACTER_IMAGES, DEFAULT_CHARACTER_IMAGE } from '@/lib/characters';
 
 const TeamDashboard = () => {
   const team = useGameStore((s) => s.team);
@@ -37,12 +37,7 @@ const TeamDashboard = () => {
     error,
   } = useSWR(team ? '/api/team/progress' : null, fetcher);
 
-  const sessionId = useGameStore((s) => s.sessionId);
-
-  const { data: boardData, isLoading: isGameLoading } = useSWR(
-    sessionId ? `/api/board/${sessionId}` : null,
-    fetcher
-  );
+  const sessionId = useGameStore((s) => s.sessionId)
 
   useEffect(() => {
     if (error) {
@@ -69,15 +64,22 @@ const TeamDashboard = () => {
   }, [teamProgress]);
 
   const characters = useMemo(() => {
-    if (!boardData || !teamProgress) return [];
-    return boardData.candidates.map((char: Character) => ({
-      ...char,
-      isSolved: teamProgress.solvedCharacters.includes(char.id),
-    }));
-  }, [boardData, teamProgress]);
+    if (!teamProgress) return [];
+    
+    return Object.entries(CHARACTER_IMAGES).map(([id, imagePath]) => {
+      const isSolved = teamProgress.solvedCharacters.includes(id);
+      return {
+        id,
+        name: `Character ${id}`,
+        imagePath: isSolved ? imagePath : DEFAULT_CHARACTER_IMAGE,
+        isSolved,
+        solvedByTeams: []
+      };
+    });
+  }, [teamProgress]);
 
   const runningTime = useTimer(challengeStartTime);
-  const isLoading = isGameLoading || isTeamProgressLoading;
+  const isLoading = isTeamProgressLoading;
 
   const handleReset = async () => {
     const toastId = toast.loading('Resetting board...');
@@ -130,7 +132,6 @@ const TeamDashboard = () => {
           ) : (
             <GameBoard characters={characters} displayMode="team" />
           )}
-          <SolvedCharactersGrid />
         </div>
       </div>
     </main>

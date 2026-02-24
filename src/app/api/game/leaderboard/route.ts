@@ -12,7 +12,7 @@ export async function GET() {
   }
 
   try {
-    const res = await fetchFromService(`${API_BASE_URL}/v1/client/leaderboard`);
+    const res = await fetchFromService(`${API_BASE_URL}/client/game/leaderboard`);
 
     if (!res.ok) {
       const errorData = await res.json();

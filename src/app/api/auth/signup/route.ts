@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const res = await fetchPublic(`${API_BASE_URL}/v1/auth/signup`, {
+    const res = await fetchPublic(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

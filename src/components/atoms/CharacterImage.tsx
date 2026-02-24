@@ -2,14 +2,14 @@ import React from 'react';
 import Image from 'next/image';
 
 interface CharacterImageProps {
-  imageUrl: string;
+  imagePath: string;
   altText: string;
 }
 
-const CharacterImage: React.FC<CharacterImageProps> = ({ imageUrl, altText }) => {
+const CharacterImage: React.FC<CharacterImageProps> = ({ imagePath, altText }) => {
   return (
     <Image
-      src={imageUrl}
+      src={imagePath}
       alt={altText}
       className="h-full w-full rounded-lg object-cover"
       width={200}

@@ -12,8 +12,8 @@ export async function GET() {
   }
 
   try {
-    // The backend mounts the master board handler at /v1/game/master-board
-    const res = await fetchFromService(`${API_BASE_URL}/v1/game/master-board`);
+    // The backend mounts the master board handler at /game/master-board
+    const res = await fetchFromService(`${API_BASE_URL}/client/game/master-board`);
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
