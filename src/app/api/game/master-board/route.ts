@@ -1,4 +1,4 @@
-import { fetchFromService } from '@/lib/server/service-client';
+import { fetchPublic } from '@/lib/server/service-client';
 import { NextResponse } from 'next/server';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL;
@@ -13,7 +13,7 @@ export async function GET() {
 
   try {
     // The backend mounts the master board handler at /game/master-board
-    const res = await fetchFromService(`${API_BASE_URL}/client/game/master-board`);
+    const res = await fetchPublic(`${API_BASE_URL}/client/game/master-board`);
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));

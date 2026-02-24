@@ -1,6 +1,6 @@
 import { fetchFromService } from '@/lib/server/service-client';
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL;
 
@@ -14,14 +14,20 @@ export async function POST() {
 
   const headersList = headers();
   const teamId = headersList.get('X-Team-Id');
+  const cookieStore = cookies();
+  const authToken = cookieStore.get('guesswho_authtoken')?.value;
 
   try {
-    const res = await fetchFromService(`${API_BASE_URL}/client/team/reset`, {
-      method: 'POST',
-      headers: {
-        'X-Team-Id': teamId || '',
+    const res = await fetchFromService(
+      `${API_BASE_URL}/client/team/reset`,
+      {
+        method: 'POST',
+        headers: {
+          'X-Team-Id': teamId || '',
+        },
       },
-    });
+      authToken
+    );
 
     if (!res.ok) {
       const errorData = await res.json();
