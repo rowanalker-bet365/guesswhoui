@@ -18,7 +18,7 @@ const initializeCharacters = (count: number): Character[] => {
   characterState = Array.from({ length: count }, (_, i) => ({
     id: `c_${i + 1}`,
     isSolved: false,
-    imageUrl: `https://picsum.photos/seed/${i + 1}/200`,
+    imagePath: `https://picsum.photos/seed/${i + 1}/200`,
     solvedByTeams: [],
   }));
   // Pre-populate some solves

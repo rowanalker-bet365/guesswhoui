@@ -24,8 +24,8 @@ export async function GET() {
 
   try {
     // The backend mounts the client router at /client/
-    // and the handler is at /v1/team/solved
-    const res = await fetchFromService(`${API_BASE_URL}/client/v1/team/solved`, {
+    // and the handler is at /team/solved
+    const res = await fetchFromService(`${API_BASE_URL}/client/team/solved`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',

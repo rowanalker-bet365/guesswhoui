@@ -16,7 +16,7 @@ export async function POST() {
   const teamId = headersList.get('X-Team-Id');
 
   try {
-    const res = await fetchFromService(`${API_BASE_URL}/client/v1/team/reset`, {
+    const res = await fetchFromService(`${API_BASE_URL}/client/team/reset`, {
       method: 'POST',
       headers: {
         'X-Team-Id': teamId || '',

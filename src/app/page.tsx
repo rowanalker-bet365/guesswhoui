@@ -11,6 +11,7 @@ import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { Character, LeaderboardEntry } from '@/store/game-store';
 import useSWR from 'swr';
 import { useMasterBoard } from '@/hooks/useMasterBoard';
+import { CHARACTER_IMAGES, DEFAULT_CHARACTER_IMAGE } from '@/lib/characters';
 
 // A simple fetcher function for SWR to use
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -27,7 +28,7 @@ export default function HomePage() {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
     error: leaderboardError,
-  } = useSWR('/api/leaderboard', fetcher, {
+  } = useSWR('/api/game/leaderboard', fetcher, {
     refreshInterval: 2000,
   });
 
@@ -50,10 +51,14 @@ export default function HomePage() {
   
   // Map ApiCharacter to Character (adding isSolved: false as it's not relevant for master board in the same way,
   // or we can derive it if needed, but for master board we mostly care about solvedByTeams)
-  const characters: Character[] = masterBoardCharacters.map(c => ({
-    ...c,
-    isSolved: false // Master board doesn't show "my" solved status, but global stats
-  }));
+  const characters: Character[] = masterBoardCharacters.map(c => {
+    const isFullySolved = leaderboard.length > 0 && c.solvedByTeams && c.solvedByTeams.length === leaderboard.length;
+    return {
+      ...c,
+      imagePath: isFullySolved ? (CHARACTER_IMAGES[c.id] || c.imagePath) : DEFAULT_CHARACTER_IMAGE,
+      isSolved: false // Master board doesn't show "my" solved status, but global stats
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
