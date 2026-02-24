@@ -28,8 +28,8 @@ async function handler(req: NextRequest) {
 
       await pubSub.subscribe('game_updates', (message) => {
         console.log(`[SSE] Received message from Redis: ${message}`);
-        controller.enqueue(encoder.encode(`event: GAME_UPDATE\n`));
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ message })}\n\n`));
+        controller.enqueue(encoder.encode(`event: game_update\n`));
+        controller.enqueue(encoder.encode(`data: ${message}\n\n`));
       });
 
       // Send a connection confirmation message

@@ -22,23 +22,31 @@ export default function HomePage() {
     logout();
   };
 
-  // MODIFIED: The SWR key is now the API route
   const {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
     error: leaderboardError,
-  } = useSWR('/api/leaderboard', fetcher, { // <-- CHANGE HERE
+  } = useSWR('/api/leaderboard', fetcher, {
     refreshInterval: 2000,
   });
+
+  const {
+    data: boardData,
+    isLoading: isBoardLoading,
+    error: boardError,
+  } = useSWR('/api/board', fetcher);
 
   useEffect(() => {
     if (leaderboardError) {
       toast.error('Failed to load leaderboard.');
     }
-  }, [leaderboardError]);
+    if (boardError) {
+      toast.error('Failed to load game board.');
+    }
+  }, [leaderboardError, boardError]);
 
   const leaderboard: LeaderboardEntry[] = leaderboardData?.entries || [];
-  const characters: Character[] = []; // Characters are not fetched on the homepage anymore
+  const characters: Character[] = boardData?.characters || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -46,7 +54,7 @@ export default function HomePage() {
       <main className="mx-auto max-w-screen-2xl p-4">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            {isLeaderboardLoading ? (
+            {isBoardLoading ? (
               <GameBoardSkeleton />
             ) : (
               <GameBoard
