@@ -18,12 +18,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
   return (
     <div className="w-full rounded-lg bg-brand p-4 text-white shadow">
       <h2 className="mb-4 text-center text-xl font-bold">Leaderboard</h2>
-      <div className="grid grid-cols-15 items-center gap-2 px-2 text-center text-sm font-bold">
+      <div className="grid grid-cols-12 items-center gap-2 px-2 text-center text-sm font-bold">
         <div className="col-span-1" /> {/* Rank - no header */}
-        <div className="col-span-5 text-left">Team</div>
-        <div className="col-span-3">Solves</div>
+        <div className="col-span-4 text-left">Team</div>
+        <div className="col-span-2">Solves</div>
         <div className="col-span-3">Quickest Solve</div>
-        <div className="col-span-3 font-semibold">Score</div>
+        <div className="col-span-2 font-semibold">Score</div>
       </div>
       <div className="mt-2 space-y-2">
         {entries.map((entry) => (
