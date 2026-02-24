@@ -1,41 +1,31 @@
 import 'server-only';
-import { GoogleAuth } from 'google-auth-library';
 
-const GUESSWHOSERVICE_URL = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL;
-
-if (!GUESSWHOSERVICE_URL) {
-  // In a browser context, this might not be set, and we'd rely on the relative /api path.
-  // The OIDC token generation will only work in a server context where this is set.
-  console.warn('NEXT_PUBLIC_GUESSWHOSERVICE_URL environment variable not set');
-}
-
-const auth = new GoogleAuth();
-
-async function getOidcToken() {
-  if (!GUESSWHOSERVICE_URL) {
-    return null;
-  }
-  const client = await auth.getIdTokenClient(GUESSWHOSERVICE_URL);
-  const res = await client.getRequestHeaders();
-  return res.Authorization;
-}
-
-export async function fetchWithAuth(
+/**
+ * A wrapper around `fetch` for making requests to the backend service.
+ * Currently behaves like a standard `fetch` call but serves as a central point
+ * for adding headers or other request logic in the future.
+ *
+ * @param input The resource that you wish to fetch.
+ * @param init An object containing any custom settings that you want to apply to the request.
+ * @returns A Promise that resolves to the Response to that request.
+ */
+export async function fetchFromService(
 	input: RequestInfo | URL,
 	init?: RequestInit
 ) {
-	const token = await getOidcToken();
-	const headers = new Headers(init?.headers);
-	if (token) {
-		headers.set('Authorization', token);
-	}
-
-	return fetch(input, {
-		...init,
-		headers,
-	});
+	return fetch(input, init);
 }
 
-export async function fetchPublic(input: RequestInfo | URL, init?: RequestInit) {
+/**
+ * A wrapper around `fetch` for making public requests to the backend service.
+ *
+ * @param input The resource that you wish to fetch.
+ * @param init An object containing any custom settings that you want to apply to the request.
+ * @returns A Promise that resolves to the Response to that request.
+ */
+export async function fetchPublic(
+	input: RequestInfo | URL,
+	init?: RequestInit
+) {
 	return fetch(input, init);
 }

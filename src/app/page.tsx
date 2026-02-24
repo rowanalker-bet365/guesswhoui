@@ -10,6 +10,7 @@ import { Header } from '@/components/organisms/Header';
 import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { Character, LeaderboardEntry } from '@/store/game-store';
 import useSWR from 'swr';
+import { useMasterBoard } from '@/hooks/useMasterBoard';
 
 // A simple fetcher function for SWR to use
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -22,23 +23,37 @@ export default function HomePage() {
     logout();
   };
 
-  // MODIFIED: The SWR key is now the API route
   const {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
     error: leaderboardError,
-  } = useSWR('/api/leaderboard', fetcher, { // <-- CHANGE HERE
+  } = useSWR('/api/leaderboard', fetcher, {
     refreshInterval: 2000,
   });
+
+  const {
+    characters: masterBoardCharacters,
+    isLoading: isBoardLoading,
+    isError: boardError,
+  } = useMasterBoard();
 
   useEffect(() => {
     if (leaderboardError) {
       toast.error('Failed to load leaderboard.');
     }
-  }, [leaderboardError]);
+    if (boardError) {
+      toast.error('Failed to load game board.');
+    }
+  }, [leaderboardError, boardError]);
 
   const leaderboard: LeaderboardEntry[] = leaderboardData?.entries || [];
-  const characters: Character[] = []; // Characters are not fetched on the homepage anymore
+  
+  // Map ApiCharacter to Character (adding isSolved: false as it's not relevant for master board in the same way,
+  // or we can derive it if needed, but for master board we mostly care about solvedByTeams)
+  const characters: Character[] = masterBoardCharacters.map(c => ({
+    ...c,
+    isSolved: false // Master board doesn't show "my" solved status, but global stats
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -46,7 +61,7 @@ export default function HomePage() {
       <main className="mx-auto max-w-screen-2xl p-4">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            {isLeaderboardLoading ? (
+            {isBoardLoading ? (
               <GameBoardSkeleton />
             ) : (
               <GameBoard

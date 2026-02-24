@@ -6,11 +6,19 @@ interface LeaderboardProps {
   entries: LeaderboardEntry[];
 }
 
+const formatDuration = (ms: number) => {
+    if (ms === 0) return 'N/A';
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+  };
+
 const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
   return (
     <div className="w-full max-w-md rounded-lg bg-brand p-4 text-white shadow">
       <h2 className="mb-4 text-center text-xl font-bold">Leaderboard</h2>
-      <div className="grid grid-cols-12 items-center gap-2 px-2 text-center text-sm font-bold">
+      <div className="grid grid-cols-15 items-center gap-2 px-2 text-center text-sm font-bold">
         <div className="col-span-1" /> {/* Rank - no header */}
         <div className="col-span-5 text-left">Team</div>
         <div className="col-span-3">Solves</div>
@@ -24,7 +32,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
             rank={entry.rank}
             teamName={entry.teamName}
             solves={entry.solves}
-            quickestSolve={String(entry.quickestSolve)}
+            quickestSolve={formatDuration(entry.quickestSolve)}
             teamColor={entry.teamColor}
             score={entry.score}
           />
