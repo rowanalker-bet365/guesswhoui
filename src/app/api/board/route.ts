@@ -1,4 +1,4 @@
-import { fetchWithAuth } from '@/lib/server/service-client';
+import { fetchFromService } from '@/lib/server/service-client';
 import { NextResponse } from 'next/server';
 
 /**
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
 
 	try {
 		const url = `${GUESSWHOSERVICE_URL}/v1/board`;
-		const res = await fetchWithAuth(url);
+		const res = await fetchFromService(url);
 
 		if (!res.ok) {
 			const errorBody = await res.text();

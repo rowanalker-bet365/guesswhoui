@@ -1,4 +1,4 @@
-import { fetchWithAuth } from '@/lib/server/service-client';
+import { fetchFromService } from '@/lib/server/service-client';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 
@@ -16,7 +16,7 @@ export async function GET() {
   const teamId = headersList.get('X-Team-Id');
 
   try {
-    const res = await fetchWithAuth(`${API_BASE_URL}/v1/client/team/progress`, {
+    const res = await fetchFromService(`${API_BASE_URL}/v1/client/team/progress`, {
       headers: {
         'X-Team-Id': teamId || '',
       },

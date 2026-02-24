@@ -10,6 +10,7 @@ import { Header } from '@/components/organisms/Header';
 import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { Character, LeaderboardEntry } from '@/store/game-store';
 import useSWR from 'swr';
+import { useMasterBoard } from '@/hooks/useMasterBoard';
 
 // A simple fetcher function for SWR to use
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -31,10 +32,10 @@ export default function HomePage() {
   });
 
   const {
-    data: boardData,
+    characters: masterBoardCharacters,
     isLoading: isBoardLoading,
-    error: boardError,
-  } = useSWR('/api/board', fetcher);
+    isError: boardError,
+  } = useMasterBoard();
 
   useEffect(() => {
     if (leaderboardError) {
@@ -46,7 +47,13 @@ export default function HomePage() {
   }, [leaderboardError, boardError]);
 
   const leaderboard: LeaderboardEntry[] = leaderboardData?.entries || [];
-  const characters: Character[] = boardData?.characters || [];
+  
+  // Map ApiCharacter to Character (adding isSolved: false as it's not relevant for master board in the same way,
+  // or we can derive it if needed, but for master board we mostly care about solvedByTeams)
+  const characters: Character[] = masterBoardCharacters.map(c => ({
+    ...c,
+    isSolved: false // Master board doesn't show "my" solved status, but global stats
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50">

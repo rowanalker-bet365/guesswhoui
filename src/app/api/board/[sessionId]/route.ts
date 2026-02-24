@@ -1,4 +1,4 @@
-import { fetchWithAuth } from '@/lib/server/service-client';
+import { fetchFromService } from '@/lib/server/service-client';
 import { NextResponse } from 'next/server';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL;
@@ -16,7 +16,7 @@ export async function GET(
   }
 
   try {
-    const res = await fetchWithAuth(`${API_BASE_URL}/v1/client/sessions/${sessionId}/board`);
+    const res = await fetchFromService(`${API_BASE_URL}/v1/client/sessions/${sessionId}/board`);
 
     if (!res.ok) {
       const errorData = await res.json();

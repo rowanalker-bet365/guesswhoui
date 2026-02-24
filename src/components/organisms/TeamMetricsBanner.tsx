@@ -1,25 +1,34 @@
 import React from 'react';
 import { MetricDisplay } from '../molecules/MetricDisplay';
 import { TeamColorDot } from '../atoms/TeamColorDot';
+import { Button } from '../atoms/Button';
 
 interface TeamMetricsBannerProps {
   teamName: string;
   teamColor: string;
+  teamId: string;
+  sessionId: string;
   totalSolves: number;
   fastestSolve: number;
   challengeStartTime: string;
   runningTime: string;
   totalScore: number;
+  onReset: () => void;
+  isResetting: boolean;
 }
 
 const TeamMetricsBanner: React.FC<TeamMetricsBannerProps> = ({
   teamName,
   teamColor,
+  teamId,
+  sessionId,
   totalSolves,
   fastestSolve,
   challengeStartTime,
   runningTime,
   totalScore,
+  onReset,
+  isResetting,
 }) => {
   const formatStartTime = (time: string) => {
     if (!time || time === 'N/A') return 'N/A';
@@ -43,15 +52,33 @@ const TeamMetricsBanner: React.FC<TeamMetricsBannerProps> = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 rounded-lg bg-brand p-4 text-white shadow">
-      <div className="lg:col-span-1 flex items-center justify-center">
-        <TeamColorDot color={teamColor} />
-        <h2 className="ml-4 text-2xl font-bold">{teamName}</h2>
+      <div className="lg:col-span-1 flex flex-col items-center justify-center space-y-2">
+        <div className="flex items-center justify-center">
+          <TeamColorDot color={teamColor} />
+          <h2 className="ml-4 text-2xl font-bold">{teamName}</h2>
+        </div>
+        <div className="text-xs opacity-75">ID: {teamId}</div>
       </div>
       <MetricDisplay label="Total Score" value={String(totalScore)} />
       <MetricDisplay label="Total Solves" value={String(totalSolves)} />
       <MetricDisplay label="Fastest Solve" value={formatDuration(fastestSolve)} />
       <MetricDisplay label="Start Time" value={formatStartTime(challengeStartTime)} />
       <MetricDisplay label="Total Time" value={runningTime} />
+      <div className="col-span-full mt-4 flex items-center justify-between border-t border-white/20 pt-4 lg:col-span-6">
+        <div className="text-sm">
+          <span className="font-semibold opacity-75">Active Session:</span>{' '}
+          <span className="font-mono">{sessionId || 'None'}</span>
+        </div>
+        <Button
+          onClick={onReset}
+          variant="secondary"
+          size="sm"
+          disabled={isResetting}
+          className="bg-white text-brand hover:bg-gray-100"
+        >
+          {isResetting ? 'Resetting...' : 'Reset Progress'}
+        </Button>
+      </div>
     </div>
   );
 };

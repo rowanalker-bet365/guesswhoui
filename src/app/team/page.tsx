@@ -6,6 +6,7 @@ import { Header } from '@/components/organisms/Header';
 import { TeamMetricsBanner } from '@/components/organisms/TeamMetricsBanner';
 import { MilestoneTracker } from '@/components/organisms/MilestoneTracker';
 import { GameBoard } from '@/components/organisms/GameBoard';
+import { SolvedCharactersGrid } from '@/components/organisms/SolvedCharactersGrid';
 import { Button } from '@/components/atoms/Button';
 import { GameBoardSkeleton } from '@/components/organisms/GameBoardSkeleton';
 import { Character, GameState } from '@/store/game-store';
@@ -104,11 +105,15 @@ const TeamDashboard = () => {
         <TeamMetricsBanner
           teamName={team?.name || 'N/A'}
           teamColor={team?.color || '#000000'}
+          teamId={team?.id || 'N/A'}
+          sessionId={sessionId || 'N/A'}
           totalSolves={totalSolves}
           fastestSolve={fastestSolve}
           challengeStartTime={challengeStartTime}
           runningTime={runningTime}
           totalScore={totalScore}
+          onReset={handleReset}
+          isResetting={isResetting}
         />
       </div>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -125,15 +130,7 @@ const TeamDashboard = () => {
           ) : (
             <GameBoard characters={characters} displayMode="team" />
           )}
-          <div className="mt-4 flex justify-end">
-            <Button
-              onClick={handleReset}
-              variant="default"
-              disabled={isResetting || isLoading}
-            >
-              {isResetting ? 'Resetting...' : 'Reset Board'}
-            </Button>
-          </div>
+          <SolvedCharactersGrid />
         </div>
       </div>
     </main>

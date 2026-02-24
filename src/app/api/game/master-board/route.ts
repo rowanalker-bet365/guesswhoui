@@ -12,17 +12,21 @@ export async function GET() {
   }
 
   try {
-    const res = await fetchFromService(`${API_BASE_URL}/v1/client/leaderboard`);
+    // The backend mounts the master board handler at /v1/game/master-board
+    const res = await fetchFromService(`${API_BASE_URL}/v1/game/master-board`);
 
     if (!res.ok) {
-      const errorData = await res.json();
-      return NextResponse.json(errorData, { status: res.status });
+      const errorData = await res.json().catch(() => ({}));
+      return NextResponse.json(
+        { message: errorData.message || `Error: ${res.status}` },
+        { status: res.status }
+      );
     }
 
     const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Failed to fetch leaderboard:', error);
+    console.error('Failed to fetch master board:', error);
     return NextResponse.json(
       { message: 'An internal error occurred.' },
       { status: 500 }
