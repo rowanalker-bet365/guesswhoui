@@ -63,7 +63,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header isLoggedIn={isLoggedIn} onSignOut={handleSignOut} />
-      <main className="mx-auto max-w-screen-2xl p-4">
+      <main className="mx-auto max-w-[1920px] p-4">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
             {isBoardLoading ? (

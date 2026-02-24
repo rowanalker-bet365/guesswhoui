@@ -11,21 +11,32 @@ import 'server-only';
  */
 export async function fetchFromService(
 	input: RequestInfo | URL,
-	init?: RequestInit
+	init?: RequestInit,
+	authToken?: string
 ) {
-	return fetch(input, init);
+	const headers = new Headers(init?.headers);
+
+	if (authToken) {
+		headers.set('Authorization', `Bearer ${authToken}`);
+	}
+
+	return fetch(input, {
+		...init,
+		headers,
+	});
 }
 
 /**
- * A wrapper around `fetch` for making public requests to the backend service.
- *
- * @param input The resource that you wish to fetch.
- * @param init An object containing any custom settings that you want to apply to the request.
- * @returns A Promise that resolves to the Response to that request.
- */
+	* A wrapper around `fetch` for making public requests to the backend service.
+	*
+	* @param input The resource that you wish to fetch.
+	* @param init An object containing any custom settings that you want to apply to the request.
+	* @returns A Promise that resolves to the Response to that request.
+	*/
 export async function fetchPublic(
 	input: RequestInfo | URL,
 	init?: RequestInit
 ) {
 	return fetch(input, init);
 }
+

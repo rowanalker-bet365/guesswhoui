@@ -1,4 +1,4 @@
-import { fetchFromService } from '@/lib/server/service-client';
+import { fetchPublic } from '@/lib/server/service-client';
 import { NextResponse } from 'next/server';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL;
@@ -12,7 +12,7 @@ export async function GET() {
   }
 
   try {
-    const res = await fetchFromService(`${API_BASE_URL}/client/game/leaderboard`);
+    const res = await fetchPublic(`${API_BASE_URL}/client/game/leaderboard`);
 
     if (!res.ok) {
       const errorData = await res.json();
