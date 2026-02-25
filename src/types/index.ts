@@ -21,7 +21,7 @@ export interface TeamData {
  */
 export interface ApiCharacter {
   id: string;
-  imagePath: string;
+  imagePath?: string;
   solvedByTeams: { teamId: string; color: string }[];
 }
 

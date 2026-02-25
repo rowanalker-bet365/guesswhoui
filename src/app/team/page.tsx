@@ -15,7 +15,7 @@ import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { useRouter } from 'next/navigation';
 import useTimer from '@/hooks/useTimer';
 import { MilestoneTrackerSkeleton } from '@/components/organisms/MilestoneTrackerSkeleton';
-import { CHARACTER_IMAGES, DEFAULT_CHARACTER_IMAGE } from '@/lib/characters';
+import { CHARACTER_IMAGES } from '@/lib/characters';
 
 const TeamDashboard = () => {
   const team = useGameStore((s) => s.team);
@@ -78,7 +78,7 @@ const TeamDashboard = () => {
       return {
         id,
         name: `Character ${id}`,
-        imagePath: isSolved ? imagePath : DEFAULT_CHARACTER_IMAGE,
+        imagePath: isSolved ? imagePath : undefined,
         isSolved,
         solvedByTeams: []
       };
