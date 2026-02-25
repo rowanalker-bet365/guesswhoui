@@ -37,7 +37,14 @@ const TeamDashboard = () => {
     error,
   } = useSWR(team ? '/api/team/progress' : null, fetcher);
 
-  const sessionId = useGameStore((s) => s.sessionId)
+  const sessionId = useGameStore((s) => s.sessionId);
+  const setSessionId = useGameStore((s) => s.setSessionId);
+
+  useEffect(() => {
+    if (teamProgress?.activeSessionId && !sessionId) {
+      setSessionId(teamProgress.activeSessionId);
+    }
+  }, [teamProgress, sessionId, setSessionId]);
 
   useEffect(() => {
     if (error) {

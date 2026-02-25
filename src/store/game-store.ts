@@ -34,7 +34,7 @@ export type GameState = {
 };
 
 export type GameActions = {
-  login: (team: Team, token: string, sessionId: string) => void;
+  login: (team: Team, token: string) => void;
   logout: () => void;
   setSessionId: (sessionId: string) => void;
   setGameState: (characters: Character[], leaderboard: LeaderboardEntry[]) => void;
@@ -69,10 +69,9 @@ export const defaultInitState: GameState = {
 export const createGameStore = (initState: GameState = defaultInitState) => {
   return createStore<GameStore>()((set) => ({
     ...initState,
-    login: (team, token, sessionId) => {
+    login: (team, token) => {
       Cookies.set('guesswho_authtoken', token, { expires: 1 }); // Expires in 1 day
-      Cookies.set('sessionId', sessionId, { expires: 1 });
-      set({ isLoggedIn: true, team, authToken: token, sessionId });
+      set({ isLoggedIn: true, team, authToken: token });
     },
     logout: () => {
       Cookies.remove('guesswho_authtoken');

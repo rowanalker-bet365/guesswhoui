@@ -28,8 +28,8 @@ export default function LoginPage() {
         throw new Error(errorData.message || 'Login failed');
       }
 
-      const { token, team, sessionId } = await response.json();
-      login(team, token, sessionId);
+      const { token, team } = await response.json();
+      login(team, token);
       router.push('/team');
     } catch (e: any) {
       setError(e.message || 'An unknown error occurred.');
