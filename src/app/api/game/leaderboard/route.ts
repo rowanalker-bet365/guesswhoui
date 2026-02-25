@@ -29,8 +29,11 @@ export async function GET() {
     const res = await fetchPublic(`${API_BASE_URL}/client/game/leaderboard`);
 
     if (!res.ok) {
-      const errorData = await res.json();
-      return NextResponse.json(errorData, { status: res.status });
+      const errorData = await res.json().catch(() => ({}));
+      return NextResponse.json(
+        { message: (errorData as { message?: string }).message || `Error: ${res.status}` },
+        { status: res.status }
+      );
     }
 
     const data: { entries: BackendLeaderboardEntry[] } = await res.json();

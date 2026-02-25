@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const res = await fetchPublic(`${API_BASE_URL}/auth/signup`, {
+    const res = await fetchPublic(`${API_BASE_URL}/client/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,12 +21,15 @@ export async function POST(request: Request) {
       body: JSON.stringify(body),
     });
 
-    const data = await res.json();
-
     if (!res.ok) {
-      return NextResponse.json(data, { status: res.status });
+      const errorData = await res.json().catch(() => ({}));
+      return NextResponse.json(
+        { message: (errorData as { message?: string }).message || `Error: ${res.status}` },
+        { status: res.status }
+      );
     }
 
+    const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Failed to signup:', error);

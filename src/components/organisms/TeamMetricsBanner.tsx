@@ -1,5 +1,5 @@
 import React from 'react';
-import { MetricDisplay } from '../molecules/MetricDisplay';
+import { MetricDisplay } from '../atoms/MetricDisplay';
 import { TeamColorDot } from '../atoms/TeamColorDot';
 import { Button } from '../atoms/Button';
 
