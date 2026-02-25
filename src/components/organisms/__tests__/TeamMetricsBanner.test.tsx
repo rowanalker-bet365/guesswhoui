@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { TeamMetricsBanner } from '../TeamMetricsBanner';
 
 // Mock child components
-jest.mock('../../molecules/MetricDisplay', () => ({
+jest.mock('../../atoms/MetricDisplay', () => ({
   MetricDisplay: ({ label, value }: { label: string; value: string }) => (
     <div data-testid="metric-display">
       <span>{label}</span>: <span>{value}</span>
