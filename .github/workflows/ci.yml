@@ -10,7 +10,27 @@ permissions:
   id-token: 'write'
 
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
   build-guesswhoui:
+    needs: test
     name: Build GuessWhoUI Container
     runs-on: ubuntu-latest
     environment: production
