@@ -1,5 +1,3 @@
-export const DEFAULT_CHARACTER_IMAGE = "/images/default.svg";
-
 export const CHARACTER_IMAGES: Record<string, string> = {
   "01": "public/images/01.png",
   "02": "public/images/02.png",

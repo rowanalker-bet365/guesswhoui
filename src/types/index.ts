@@ -13,6 +13,7 @@ export interface TeamData {
   fastestSolve: number; // Duration in milliseconds
   totalScore: number;
   completedMilestones: { id: string; timeTaken: string }[];
+  activeSessionId?: string;
 }
 
 /**
@@ -20,7 +21,7 @@ export interface TeamData {
  */
 export interface ApiCharacter {
   id: string;
-  imagePath: string;
+  imagePath?: string;
   solvedByTeams: { teamId: string; color: string }[];
 }
 
@@ -58,10 +59,9 @@ export interface LoginResponse {
   token: string;
   team: {
     id: string;
-    name:string;
+    name: string;
     color: string;
   };
-  sessionId: string;
 }
 
 // GET /api/game/state

@@ -15,7 +15,7 @@ import { useGameStore, useGameStoreApi } from '@/contexts/GameContext';
 import { useRouter } from 'next/navigation';
 import useTimer from '@/hooks/useTimer';
 import { MilestoneTrackerSkeleton } from '@/components/organisms/MilestoneTrackerSkeleton';
-import { CHARACTER_IMAGES, DEFAULT_CHARACTER_IMAGE } from '@/lib/characters';
+import { CHARACTER_IMAGES } from '@/lib/characters';
 
 const TeamDashboard = () => {
   const team = useGameStore((s) => s.team);
@@ -37,7 +37,14 @@ const TeamDashboard = () => {
     error,
   } = useSWR(team ? '/api/team/progress' : null, fetcher);
 
-  const sessionId = useGameStore((s) => s.sessionId)
+  const sessionId = useGameStore((s) => s.sessionId);
+  const setSessionId = useGameStore((s) => s.setSessionId);
+
+  useEffect(() => {
+    if (teamProgress?.activeSessionId && !sessionId) {
+      setSessionId(teamProgress.activeSessionId);
+    }
+  }, [teamProgress, sessionId, setSessionId]);
 
   useEffect(() => {
     if (error) {
@@ -71,7 +78,7 @@ const TeamDashboard = () => {
       return {
         id,
         name: `Character ${id}`,
-        imagePath: isSolved ? imagePath : DEFAULT_CHARACTER_IMAGE,
+        imagePath: isSolved ? imagePath : undefined,
         isSolved,
         solvedByTeams: []
       };
