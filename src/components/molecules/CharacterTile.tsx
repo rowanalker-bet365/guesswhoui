@@ -24,9 +24,13 @@ const CharacterTile: React.FC<CharacterTileProps> = ({
       ? solvedByTeams.length === totalTeams
       : false;
 
+  const showImage =
+    imagePath &&
+    (displayMode === 'team' || (displayMode === 'home' && isFullySolved));
+
   return (
     <div className="relative aspect-square w-full">
-      {imagePath ? (
+      {showImage ? (
         <CharacterImage imagePath={imagePath} altText="Character" />
       ) : (
         <Silhouette />
