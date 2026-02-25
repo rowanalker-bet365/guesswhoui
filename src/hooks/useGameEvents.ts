@@ -25,22 +25,21 @@ export const useGameEvents = () => {
         console.log('[SSE] Connection opened.');
       };
 
-      eventSource.addEventListener('BOARD_RESET', (event) => {
+      eventSource.addEventListener('BOARD_RESET', (_event) => {
         console.log('[SSE] Board reset detected, refetching all data...');
-        // Re-fetch data without showing stale data first
-        mutate(`/api/board/${sessionId}`);
+        // Invalidate all SWR caches so the UI re-fetches fresh data.
+        mutate('/api/game/master-board');
         mutate('/api/team/progress');
-        mutate('/api/leaderboard');
+        mutate('/api/game/leaderboard');
       });
 
       eventSource.addEventListener('game_update', (event) => {
         const payload = JSON.parse(event.data);
         console.log('[SSE] Game update received:', payload);
-        // Instead of updating the character directly, we trigger a re-fetch
-        // of the game state and other relevant data.
-        mutate(`/api/board/${sessionId}`);
+        // Invalidate relevant SWR caches to trigger a re-fetch.
+        mutate('/api/game/master-board');
         mutate('/api/team/progress');
-        mutate('/api/leaderboard');
+        mutate('/api/game/leaderboard');
       });
 
       eventSource.onerror = (err) => {
