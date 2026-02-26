@@ -42,26 +42,26 @@ The leaderboard on the right-hand side shows the current rankings of all partici
 
 At the top of the screen, you can see your team's private statistics, including your current score, total solves, and any milestones you have achieved.
 
-## 4. How to Play: The Core Loop
+## 4. How to Play
 
-Identifying the target is not done through the UI. Instead, your team must build a program (e.g., a CLI application or a simple script) to interact with the **Game API**.
+Yyour team must build a program (e.g. a CLI application or a simple script) to interact with the **Game API:**.
 
 This is where the real challenge lies. Your program will need to:
 
-1.  **Start a New Round:** Make an API call to begin a new session and get a `sessionId`.
+1.  **Start a New Round:** Begin your session and get your `sessionId`.
 2.  **Fetch the Board:** Download the full list of candidate characters and their traits for the current round.
-3.  **Ask Questions:** Programmatically ask questions about the hidden target's traits (e.g., "What is their hair color?").
-4.  **Handle Different Answers:** Some answers will be straightforward, while others may be encrypted or come from "flaky" endpoints that require error handling and retries.
-5.  **Eliminate Candidates:** Use the answers you receive to narrow down the list of possible targets.
-6.  **Submit Your Guess:** Once you believe you have identified the target, submit your final guess to the API.
-
-**(Note: The detailed specification for the Game API, including endpoints for asking questions and submitting guesses, will be provided by the service-side team. This section will be updated once that information is available.)**
+4.  **Ask Questions:** Ask questions about the hidden target's traits.
+5.  **Handle Different Answers:** Some answers will be straightforward, while others may be encrypted or come from "flaky" endpoints.
+6.  **Eliminate Candidates:** Use the answers you receive to narrow down the list of possible targets.
+7.  **Submit Your Guess:** Once you believe you have identified the target, submit your guess. But be careful, get it wrong and you'll be in for a nasty surprise.
+8.  **Solve the Board:** Can you decrypt the identity of all characters?
+9.  **Optimise:** You can reset your board at any time. This will not affect your score, but will allow you to start fresh and perfect your program.
 
 ## 5. Milestones and Scoring
 
-Your team earns points for various achievements throughout the game. While the full scoring model is detailed in the main solution document, the key ways to score are:
+Your team earns points for various achievements throughout the game.
 
--   **Achieving Milestones:** Earn significant points for reaching key technical milestones, such as successfully asking a question or handling an encrypted answer.
+-   **Achieving Milestones:** Earn significant points for reaching key technical milestones; such as decrypting a characters identity, or handling an encrypted answer.
 -   **Correct Solves:** Earn points for each correct guess.
 -   **Bonuses:** Receive bonus points for solving rounds quickly and using a minimal number of questions.
 
