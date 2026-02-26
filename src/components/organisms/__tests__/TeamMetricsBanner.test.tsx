@@ -41,7 +41,8 @@ describe('TeamMetricsBanner', () => {
   it('renders team information correctly', () => {
     render(<TeamMetricsBanner {...defaultProps} />);
     expect(screen.getByText('Team Alpha')).toBeInTheDocument();
-    expect(screen.getByText('ID: team-123')).toBeInTheDocument();
+    expect(screen.getByText('Team ID:')).toBeInTheDocument();
+    expect(screen.getByText('team-123')).toBeInTheDocument();
     expect(screen.getByTestId('team-dot')).toHaveStyle({ backgroundColor: '#FF0000' });
   });
 

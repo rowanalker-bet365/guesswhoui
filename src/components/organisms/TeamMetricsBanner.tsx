@@ -57,7 +57,6 @@ const TeamMetricsBanner: React.FC<TeamMetricsBannerProps> = ({
           <TeamColorDot color={teamColor} />
           <h2 className="ml-4 text-2xl font-bold">{teamName}</h2>
         </div>
-        <div className="text-xs opacity-75">ID: {teamId}</div>
       </div>
       <MetricDisplay label="Total Score" value={String(totalScore)} />
       <MetricDisplay label="Total Solves" value={String(totalSolves)} />
@@ -65,9 +64,15 @@ const TeamMetricsBanner: React.FC<TeamMetricsBannerProps> = ({
       <MetricDisplay label="Start Time" value={formatStartTime(challengeStartTime)} />
       <MetricDisplay label="Total Time" value={runningTime} />
       <div className="col-span-full mt-4 flex items-center justify-between border-t border-white/20 pt-4 lg:col-span-6">
-        <div className="text-sm">
-          <span className="font-semibold opacity-75">Active Session:</span>{' '}
-          <span className="font-mono">{sessionId || 'None'}</span>
+        <div className="flex items-center gap-6 text-sm">
+          <div>
+            <span className="font-semibold opacity-75">Team ID:</span>{' '}
+            <span className="font-mono">{teamId}</span>
+          </div>
+          <div>
+            <span className="font-semibold opacity-75">Active Session:</span>{' '}
+            <span className="font-mono">{sessionId || 'None'}</span>
+          </div>
         </div>
         <Button
           onClick={onReset}
