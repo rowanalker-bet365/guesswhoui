@@ -37,6 +37,6 @@ export async function fetchPublic(
 	input: RequestInfo | URL,
 	init?: RequestInit
 ) {
-	return fetch(input, init);
+	return fetch(input, { cache: 'no-store', ...init });
 }
 
