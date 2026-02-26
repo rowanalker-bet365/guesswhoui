@@ -20,21 +20,18 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, teamName, onSignOut }) => {
         <Link href="/" className="text-2xl font-bold text-white">
           Guess Who: Identity Under Fire
         </Link>
-        <button
-          onClick={() => setShowHowToPlay(true)}
-          className="text-sm font-medium text-white underline-offset-2 hover:underline focus:outline-none"
-        >
-          How to Play
-        </button>
       </div>
       <nav>
         {isLoggedIn ? (
           <div className="flex items-center space-x-4 text-white">
-            <Button variant="ghost" onClick={() => setShowHowToPlay(true)}>
+            <Button
+              variant="nav"
+              onClick={() => setShowHowToPlay(true)}
+            >
               How to Play
             </Button>
             <Link href="/team">
-              <Button variant="ghost">{teamName || 'Team Page'}</Button>
+              <Button variant="nav">{teamName || 'Team Page'}</Button>
             </Link>
             <Button onClick={onSignOut} variant="outline">
               Sign Out
@@ -42,12 +39,17 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, teamName, onSignOut }) => {
           </div>
         ) : (
           <div className="flex items-center">
-            <Button variant="ghost" onClick={() => setShowHowToPlay(true)}>
+            <Button
+              variant="nav"
+              onClick={() => setShowHowToPlay(true)}
+            >
               How to Play
             </Button>
             <div className="ml-4 flex items-center space-x-2">
               <Link href="/auth/login">
-                <Button variant="ghost">Login</Button>
+                <Button variant="nav">
+                  Login
+                </Button>
               </Link>
               <Link href="/auth/signup">
                 <Button>Sign Up</Button>
