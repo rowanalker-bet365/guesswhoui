@@ -7,7 +7,7 @@ import GameEventsInitializer from "@/components/GameEventsInitializer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Guess Who? Challenge",
+  title: "Guess Who: Identity Under Fire",
   description: "The live dashboard for the Guess Who? programming challenge.",
 };
 
