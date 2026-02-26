@@ -8,6 +8,8 @@ async function handler(req: NextRequest) {
     return new NextResponse('Request must be for an event stream.', { status: 400 });
   }
 
+  let keepAliveInterval: ReturnType<typeof setInterval> | null = null;
+
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder();
@@ -36,13 +38,31 @@ async function handler(req: NextRequest) {
       controller.enqueue(encoder.encode(`event: connection\n`));
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ message: 'SSE connection established' })}\n\n`));
 
+      keepAliveInterval = setInterval(() => {
+        try {
+          controller.enqueue(encoder.encode(': keepalive\n\n'));
+        } catch {
+          clearInterval(keepAliveInterval!);
+        }
+      }, 15000);
+
       req.signal.addEventListener('abort', () => {
         console.log('[SSE] Client disconnected.');
+        if (keepAliveInterval) {
+          clearInterval(keepAliveInterval);
+          keepAliveInterval = null;
+        }
         pubSub.unsubscribe('game_updates');
         pubSub.quit();
         redisClient.quit();
         controller.close();
       });
+    },
+    cancel() {
+      if (keepAliveInterval) {
+        clearInterval(keepAliveInterval);
+        keepAliveInterval = null;
+      }
     },
   });
 

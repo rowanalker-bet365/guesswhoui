@@ -6,7 +6,8 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export const useMasterBoard = () => {
   const { data, error, isLoading } = useSWR<{ characters: ApiCharacter[] }>(
     '/api/game/master-board',
-    fetcher
+    fetcher,
+    { refreshInterval: 10000 }
   );
 
   return {
