@@ -29,7 +29,7 @@ export default function HomePage() {
     isLoading: isLeaderboardLoading,
     error: leaderboardError,
   } = useSWR('/api/game/leaderboard', fetcher, {
-    refreshInterval: 2000,
+    refreshInterval: 10000,
   });
 
   const {
