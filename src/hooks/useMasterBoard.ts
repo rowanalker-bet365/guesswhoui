@@ -7,7 +7,7 @@ export const useMasterBoard = () => {
   const { data, error, isLoading } = useSWR<{ characters: ApiCharacter[] }>(
     '/api/game/master-board',
     fetcher,
-    { refreshInterval: 10000 }
+    { refreshInterval: 2000 }
   );
 
   return {

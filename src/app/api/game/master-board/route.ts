@@ -1,6 +1,8 @@
 import { fetchPublic } from '@/lib/server/service-client';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL;
 
 export async function GET() {
