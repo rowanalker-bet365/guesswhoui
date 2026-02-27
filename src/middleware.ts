@@ -14,9 +14,20 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // If a team is already logged in, block access to auth pages so a second
+  // team cannot log in on the same browser and overwrite the shared auth cookie.
+  if (
+    request.nextUrl.pathname.startsWith('/auth/login') ||
+    request.nextUrl.pathname.startsWith('/auth/signup')
+  ) {
+    if (authToken) {
+      return NextResponse.redirect(new URL('/team', request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/team/:path*'],
+  matcher: ['/team/:path*', '/auth/:path*'],
 };

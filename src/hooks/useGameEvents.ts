@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
+import Cookies from 'js-cookie';
 import { useSWRConfig } from 'swr';
 import { StoreApi } from 'zustand';
 import { GameStore } from '@/store/game-store';
@@ -24,11 +25,26 @@ export function useGameEvents(storeApi?: StoreApi<GameStore>) {
     const eventSource = new EventSource('/api/events');
     eventSourceRef.current = eventSource;
 
-    eventSource.addEventListener('game_update', () => {
+    eventSource.addEventListener('game_update', (event) => {
       reconnectAttemptsRef.current = 0; // Reset backoff on successful message
+
+      // Global data is always stale after any game update.
       mutate('/api/game/master-board');
-      mutate('/api/team/progress');
       mutate('/api/game/leaderboard');
+
+      // Team-specific progress should only be refetched when the event belongs
+      // to THIS team. Refetching for every event would cause Tab 1 to receive
+      // Tab 2's data when both teams are connected to the same SSE stream.
+      try {
+        const payload = JSON.parse(event.data) as { teamId?: string };
+        const currentTeamId = storeApi?.getState().team?.id ?? Cookies.get('teamId');
+        if (!payload.teamId || !currentTeamId || payload.teamId === currentTeamId) {
+          mutate('/api/team/progress');
+        }
+      } catch {
+        // Unparseable payload — refetch to be safe.
+        mutate('/api/team/progress');
+      }
     });
 
     eventSource.onopen = () => {
@@ -51,7 +67,7 @@ export function useGameEvents(storeApi?: StoreApi<GameStore>) {
         }
       }, delay);
     };
-  }, [mutate]);
+  }, [mutate, storeApi]);
 
   useEffect(() => {
     isMountedRef.current = true;
