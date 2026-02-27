@@ -7,7 +7,7 @@ interface HowToPlayModalProps {
   onClose: () => void;
 }
 
-const gameApiUrl = process.env.NEXT_PUBLIC_GAME_API_URL || '(not configured)';
+const gameApiUrl = process.env.NEXT_PUBLIC_GUESSWHOSERVICE_URL || '(not configured)';
 
 const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
