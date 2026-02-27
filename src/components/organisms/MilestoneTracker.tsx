@@ -21,8 +21,9 @@ const MilestoneTracker: React.FC<MilestoneTrackerProps> = ({ completedMilestones
       <h2 className="mb-4 text-center text-xl font-bold">Milestone Progress</h2>
       <div>
         {ALL_MILESTONES.map((milestone) => {
+          const isCompleted = completedMilestoneMap.has(milestone.id);
           const timeTaken = completedMilestoneMap.get(milestone.id);
-          const status = timeTaken ? 'completed' : 'not_started';
+          const status = isCompleted ? 'completed' : 'not_started';
 
           return (
             <MilestoneProgressItem
