@@ -71,10 +71,12 @@ export const createGameStore = (initState: GameState = defaultInitState) => {
     ...initState,
     login: (team, token) => {
       Cookies.set('guesswho_authtoken', token, { expires: 1 }); // Expires in 1 day
+      Cookies.set('teamId', team.id, { expires: 1 }); // Required for X-Team-Id header in API calls
       set({ isLoggedIn: true, team, authToken: token });
     },
     logout: () => {
       Cookies.remove('guesswho_authtoken');
+      Cookies.remove('teamId');
       Cookies.remove('sessionId');
       set({
         isLoggedIn: false,
