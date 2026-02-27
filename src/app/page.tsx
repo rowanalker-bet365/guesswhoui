@@ -28,9 +28,7 @@ export default function HomePage() {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
     error: leaderboardError,
-  } = useSWR('/api/game/leaderboard', fetcher, {
-    refreshInterval: 10000,
-  });
+  } = useSWR('/api/game/leaderboard', fetcher);
 
   const {
     characters: masterBoardCharacters,

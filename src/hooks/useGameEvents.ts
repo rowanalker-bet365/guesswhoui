@@ -28,9 +28,10 @@ export function useGameEvents(storeApi?: StoreApi<GameStore>) {
     eventSource.addEventListener('game_update', (event) => {
       reconnectAttemptsRef.current = 0; // Reset backoff on successful message
 
-      // Global data is always stale after any game update.
-      mutate('/api/game/master-board', undefined, { revalidate: true });
-      mutate('/api/game/leaderboard', undefined, { revalidate: true });
+      // Revalidate global data in the background, keeping existing cached data
+      // visible until the fresh response arrives — prevents a jarring UI flash.
+      mutate('/api/game/master-board');
+      mutate('/api/game/leaderboard');
 
       // Team-specific progress should only be refetched when the event belongs
       // to THIS team. Refetching for every event would cause Tab 1 to receive
@@ -48,6 +49,13 @@ export function useGameEvents(storeApi?: StoreApi<GameStore>) {
     });
 
     eventSource.onopen = () => {
+      // On a reconnection (not the initial connect), revalidate all cached data
+      // to catch any game_update events that were missed during the outage.
+      if (reconnectAttemptsRef.current > 0) {
+        mutate('/api/game/master-board');
+        mutate('/api/game/leaderboard');
+        mutate('/api/team/progress');
+      }
       reconnectAttemptsRef.current = 0;
     };
 
