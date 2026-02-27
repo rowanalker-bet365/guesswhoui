@@ -48,6 +48,13 @@ export function useGameEvents(storeApi?: StoreApi<GameStore>) {
     });
 
     eventSource.onopen = () => {
+      // On a reconnection (not the initial connect), revalidate all cached data
+      // to catch any game_update events that were missed during the outage.
+      if (reconnectAttemptsRef.current > 0) {
+        mutate('/api/game/master-board', undefined, { revalidate: true });
+        mutate('/api/game/leaderboard', undefined, { revalidate: true });
+        mutate('/api/team/progress');
+      }
       reconnectAttemptsRef.current = 0;
     };
 

@@ -35,7 +35,7 @@ const TeamDashboard = () => {
     data: teamProgress,
     isLoading: isTeamProgressLoading,
     error,
-  } = useSWR(team ? '/api/team/progress' : null, fetcher, { refreshInterval: 5000 });
+  } = useSWR(team ? '/api/team/progress' : null, fetcher);
 
   const sessionId = useGameStore((s) => s.sessionId);
   const setSessionId = useGameStore((s) => s.setSessionId);
