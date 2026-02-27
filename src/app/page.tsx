@@ -30,6 +30,8 @@ export default function HomePage() {
     error: leaderboardError,
   } = useSWR('/api/game/leaderboard', fetcher);
 
+  const { data: configData } = useSWR('/api/config', fetcher);
+
   const {
     characters: masterBoardCharacters,
     isLoading: isBoardLoading,
@@ -60,7 +62,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header isLoggedIn={isLoggedIn} onSignOut={handleSignOut} />
+      <Header isLoggedIn={isLoggedIn} onSignOut={handleSignOut} serviceUrl={configData?.serviceUrl} />
       <main className="mx-auto max-w-[1920px] p-4">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
