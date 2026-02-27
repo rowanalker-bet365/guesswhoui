@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 import { useStore } from 'zustand';
 import { createGameStore, type GameStore } from '@/store/game-store';
 
@@ -13,6 +13,13 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   if (!storeRef.current) {
     storeRef.current = createGameStore();
   }
+
+  useEffect(() => {
+    const store = storeRef.current!;
+    if (!store.getState().isLoggedIn) {
+      store.getState().restoreSession();
+    }
+  }, []);
 
   return (
     <GameStoreContext.Provider value={storeRef.current}>
