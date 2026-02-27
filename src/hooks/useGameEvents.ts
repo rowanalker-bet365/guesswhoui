@@ -29,8 +29,8 @@ export function useGameEvents(storeApi?: StoreApi<GameStore>) {
       reconnectAttemptsRef.current = 0; // Reset backoff on successful message
 
       // Global data is always stale after any game update.
-      mutate('/api/game/master-board');
-      mutate('/api/game/leaderboard');
+      mutate('/api/game/master-board', undefined, { revalidate: true });
+      mutate('/api/game/leaderboard', undefined, { revalidate: true });
 
       // Team-specific progress should only be refetched when the event belongs
       // to THIS team. Refetching for every event would cause Tab 1 to receive
