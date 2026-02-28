@@ -9,9 +9,10 @@ interface HeaderProps {
   isLoggedIn: boolean;
   teamName?: string;
   onSignOut: () => void;
+  serviceUrl?: string | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ isLoggedIn, teamName, onSignOut }) => {
+const Header: React.FC<HeaderProps> = ({ isLoggedIn, teamName, onSignOut, serviceUrl }) => {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
   return (
@@ -58,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, teamName, onSignOut }) => {
           </div>
         )}
       </nav>
-      <HowToPlayModal isOpen={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
+      <HowToPlayModal isOpen={showHowToPlay} onClose={() => setShowHowToPlay(false)} serviceUrl={serviceUrl} />
     </header>
   );
 };
