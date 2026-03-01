@@ -3,7 +3,21 @@ import { createClient } from 'redis';
 
 export const dynamic = 'force-dynamic'; // Ensure this route is not statically built
 
+const AUTH_TOKEN_COOKIE_NAME = 'guesswho_authtoken';
+
 async function handler(req: NextRequest) {
+  // Auth gate: require a valid JWT token via cookie or Authorization header.
+  // Matches the pattern used by other API routes (e.g. team/progress/route.ts
+  // and middleware.ts) — presence of the token is sufficient; no signature
+  // verification is performed here.
+  const authToken =
+    req.cookies.get(AUTH_TOKEN_COOKIE_NAME)?.value ||
+    req.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
+
+  if (!authToken) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
   if (req.headers.get('accept') !== 'text/event-stream') {
     return new NextResponse('Request must be for an event stream.', { status: 400 });
   }
