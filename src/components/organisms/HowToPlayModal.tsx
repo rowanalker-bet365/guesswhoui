@@ -5,11 +5,11 @@ import React, { useEffect } from 'react';
 interface HowToPlayModalProps {
   isOpen: boolean;
   onClose: () => void;
+  serviceUrl?: string | null;
 }
 
-const gameApiUrl = process.env.NEXT_PUBLIC_GAME_API_URL || '(not configured)';
-
-const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose }) => {
+const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose, serviceUrl }) => {
+  const gameApiUrl = serviceUrl || '(not configured)';
   useEffect(() => {
     if (!isOpen) return;
 

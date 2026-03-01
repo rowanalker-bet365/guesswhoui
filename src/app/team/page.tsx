@@ -151,6 +151,10 @@ export default function TeamPage() {
   const team = useGameStore((s) => s.team);
   const { logout } = useGameStoreApi().getState();
 
+  const { data: configData } = useSWR('/api/config', (url: string) =>
+    fetch(url).then((res) => res.json())
+  );
+
   const handleSignOut = () => {
     logout();
     router.push('/');
@@ -158,7 +162,7 @@ export default function TeamPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header isLoggedIn={isLoggedIn} teamName={team?.name} onSignOut={handleSignOut} />
+      <Header isLoggedIn={isLoggedIn} teamName={team?.name} onSignOut={handleSignOut} serviceUrl={configData?.serviceUrl} />
       <TeamDashboard />
     </div>
   );

@@ -61,11 +61,15 @@ describe('HowToPlayModal', () => {
       expect(screen.getByText(/Bonuses/)).toBeInTheDocument();
     });
 
-    it('renders the API URL in the intro paragraph', () => {
+    it('renders the fallback text when no serviceUrl prop is provided', () => {
       render(<HowToPlayModal {...defaultProps} />);
-      // gameApiUrl is a module-level constant; in the test environment
-      // NEXT_PUBLIC_GAME_API_URL is not set so it falls back to '(not configured)'
+      // serviceUrl is optional; when omitted it falls back to '(not configured)'
       expect(screen.getByText(/not configured/)).toBeInTheDocument();
+    });
+
+    it('renders the provided serviceUrl in the intro paragraph', () => {
+      render(<HowToPlayModal {...defaultProps} serviceUrl="https://api.example.com" />);
+      expect(screen.getByText(/https:\/\/api\.example\.com/)).toBeInTheDocument();
     });
 
     it('renders the service API reference in the intro paragraph', () => {
