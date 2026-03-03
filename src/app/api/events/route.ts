@@ -3,21 +3,13 @@ import { createClient } from 'redis';
 
 export const dynamic = 'force-dynamic'; // Ensure this route is not statically built
 
-const AUTH_TOKEN_COOKIE_NAME = 'guesswho_authtoken';
-
+// This endpoint is intentionally unauthenticated. The SSE stream only emits
+// notification triggers (e.g. "something changed") — it does not contain any
+// sensitive data. Clients react to these events by refetching from the actual
+// data endpoints (/api/game/master-board, /api/game/leaderboard, /api/team/progress),
+// each of which enforces its own auth where required. Keeping this open allows
+// unauthenticated spectators on the home page to receive real-time board updates.
 async function handler(req: NextRequest) {
-  // Auth gate: require a valid JWT token via cookie or Authorization header.
-  // Matches the pattern used by other API routes (e.g. team/progress/route.ts
-  // and middleware.ts) — presence of the token is sufficient; no signature
-  // verification is performed here.
-  const authToken =
-    req.cookies.get(AUTH_TOKEN_COOKIE_NAME)?.value ||
-    req.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
-
-  if (!authToken) {
-    return new NextResponse('Unauthorized', { status: 401 });
-  }
-
   if (req.headers.get('accept') !== 'text/event-stream') {
     return new NextResponse('Request must be for an event stream.', { status: 400 });
   }
