@@ -7,4 +7,5 @@ export const ALL_MILESTONES = [
   { id: 'S1', name: 'Efficiency' },
   { id: 'S2', name: 'Automation' },
   { id: 'S3', name: 'Resilience' },
+  { id: 'SP1', name: 'Enhanced Encryption' },
 ];

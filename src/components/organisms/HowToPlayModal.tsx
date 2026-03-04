@@ -94,6 +94,12 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose, servic
                 time. This will not affect your score, but will allow you to start fresh and perfect
                 your program.
               </li>
+              <li>
+                <span className="font-bold">9. Brace Yourself:</span> Think you&apos;ve seen it all?
+                Think again. As the competition heats up, the API may start throwing some extra
+                curveballs your way that will put yourcrypto skills to the test. Stay sharp,
+                and make sure your program can handle whatever gets thrown at it.
+              </li>
             </ol>
           </section>
 
